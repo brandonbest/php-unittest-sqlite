@@ -1,0 +1,48 @@
+{
+    "name": "brandonbest/php-unittest-sqlite",
+    "description": "Limit the number of migrations/seeders run during unit tests.",
+    "license": "MIT",
+    "homepage": "https://brandonbest.com/packages/php-unittest-sqlite",
+    "support": {
+        "issues": "https://github.com/brandonbest/php-unittest-sqlite/issues",
+        "source": "https://github.com/brandonbest/php-unittest-sqlite"
+    },
+    "authors": [
+        {
+            "name": "Brandon Best",
+            "email": "brandonbest@brandonbest.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2.0"
+    },
+    "require-dev": {
+        "php": "^7.2.0",
+        "orchestra/testbench": "^5.2"
+    },
+    "autoload": {
+        "classmap": [
+            "src"
+        ],
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "UnittestSqlite\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BrandonBest\\UnittestSqlite\\UnittestSqliteServiceProvider"
+            ],
+            "aliases": {
+                "Brute": "UnittestSqlite\\UnittestSqliteFacade"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev"
+}
