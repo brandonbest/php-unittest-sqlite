@@ -2,14 +2,14 @@
 
 This package optimizes unit testing speed, especially for packages with a large number of migrations and/or seeders.
 
-The package works by managing two copies of a sqlite database, `base` and `copy`. Migrations and seeders are run onto `copy`.
+The package works by managing two copies of a sqlite database, `base` and `copy`. Migrations and seeders are run on `copy` if `base` does not exist.
 `Copy` is cloned into `base`. Every unit test with `RefreshDatabase` trait will delete `copy` and clone `base` into `copy`.
-`Base` is automatically deleted at the end of the unit test.
 
-## Commands
+`Base` is deleted at the end of the unit test (you can keep `Base` around with a simple configuration update).
 
-```php artisan sqlite:delete```
-Deletes the `base` file.
+---
+
+# Setup
 
 ## PHP Unit
 
@@ -21,6 +21,11 @@ Add the following listener to phpunit.xml.
 </listeners>
 ```
 
+## Commands
+
+```php artisan sqlite:delete```
+Deletes the `base` file.
+
 ## Future Plans
 
- # Keep the base file at the end of unit testing by default. Offer a config setting to turn this feature off.
+ - Automatically detect new migrations and update the base sqlite
