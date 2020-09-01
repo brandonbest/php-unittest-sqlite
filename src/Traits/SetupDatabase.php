@@ -2,23 +2,26 @@
 
 namespace BrandonBest\UnittestSqlite\Traits;
 
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\File;
-use Tests\CreatesApplication;
+use BrandonBest\UnittestSqlite\Exceptions\UnittestSqliteSetupException;
+use ErrorException;
 
 trait SetupDatabase
 {
-    use CreatesApplication;
-
-    public function checkDatabase(): void
+    /**
+     * Validate the Database is Sqlite
+     *
+     * @throws UnittestSqliteSetupException
+     */
+    public function validateDatabase(): Void
     {
-        $this->validateDatabaseConfig();
+        $this->isSqlite();
 
-        if (file_exists($this->copyPath())) {
-            unlink($this->copyPath());
+        $copySqlite = $this->copySqlite();
+        if (file_exists($copySqlite)) {
+            unlink($copySqlite);
         }
 
-        touch($this->copyPath());
+        $this->createCopySqlite();
     }
 
     /**
@@ -28,7 +31,111 @@ trait SetupDatabase
      */
     public function baseSqlite(): string
     {
-        return $this->basePath('tests/database/base.sqlite');
+        return $this->copySqlitePath() . '/base.sqlite';
+    }
+
+    /**
+     * Full file path of sqlite
+     *
+     * @return string
+     */
+    public function copySqlite(): string
+    {
+        $file = $this->configCopySqlite();
+        if (stristr($file, '.sqlite')) {
+            return $file;
+        }
+
+        return $this->defaultCopySqlite();
+    }
+
+    /**
+     * Pull the Sqlite Path without a File
+     *
+     * @return string
+     */
+    public function copySqlitePath(): string
+    {
+        $copySqlite = $this->copySqlite();
+        $copySqlitePath = explode('/', $copySqlite);
+        array_pop($copySqlitePath);
+        $copySqlitePath = implode('/', $copySqlitePath);
+        return $copySqlitePath;
+    }
+
+    /**
+     * Create the Sqlite Fille
+     *
+     * @throws UnittestSqliteSetupException
+     */
+    public function copySqliteCreate()
+    {
+        $file = $this->copySqlite();
+
+        try {
+            touch($file);
+        } catch (ErrorException $e) {
+            throw new UnittestSqliteSetupException('The file or path does not exist: ' . $file);
+        }
+    }
+
+    /**
+     * Default Config Sqlite File
+     *
+     * @return string
+     */
+    public function configCopySqlite(): string
+    {
+        return (string) config('database.connections.sqlite.database');
+    }
+
+    /**
+     * Default Sqlite file (if config does not exist)
+     *
+     * @return string
+     */
+    public function defaultCopySqlite(): string
+    {
+        return $this->basePath('tests/database/database.sqlite');
+    }
+
+    /**
+     * Create Directories if Do Not Exist
+     *
+     * @param string $file
+     */
+    public function databaseDirectoryExists(string $file): void
+    {
+        $filePath = explode('/', $file);
+        array_pop($filePath);
+        $fullFilePath = '';
+
+        foreach ($filePath as $directory) {
+            if (empty($directory)) {
+                continue;
+            }
+
+            $fullFilePath .= '/' . $directory;
+
+            if (!file_exists($fullFilePath)) {
+                mkdir($fullFilePath);
+            }
+        }
+    }
+
+    /**
+     * Create a Sqlite Directory
+     */
+    public function createCopySqlite(): void
+    {
+        $file = $this->copySqlite();
+
+        try {
+            $this->databaseDirectoryExists($file);
+        } catch (ErrorException $e) {
+            $file = $this->defaultCopySqlite();
+            $this->databaseDirectoryExists($file);
+        }
     }
 
     /**
@@ -38,24 +145,20 @@ trait SetupDatabase
      *
      * @return string
      */
-    public function basePath(string $path)
+    public function basePath(string $path): string
     {
-        return $this->createApplication()->basePath($path);
-    }
-
-    public function copyPath(): string
-    {
-        return (string) config('database.connections.sqlite.database') ?? $this->basePath('tests/database/database.sqlite');
+        return base_path($path);
     }
 
     /**
-     * @throws Exception
+     * @throws UnittestSqliteSetupException
      */
-    public function validateDatabaseConfig(): void
+    public function isSqlite(): bool
     {
         if (config('database.default') !== 'sqlite') {
-            die("Your database is not sqlite, using ". config('database.default'));
+            throw new UnittestSqliteSetupException("Your database is not sqlite, using ". config('database.default'));
         }
-    }
 
+        return true;
+    }
 }

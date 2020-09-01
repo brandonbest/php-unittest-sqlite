@@ -2,13 +2,11 @@
 
 namespace BrandonBest\Console\Commands;
 
-use BrandonBest\UnittestSqlite\Traits\SetupDatabase;
+use BrandonBest\UnittestSqlite\Services\SetupDatabase;
 use Illuminate\Console\Command;
 
 class SqliteDeleteTest extends Command
 {
-    use SetupDatabase;
-
     /**
      * The name and signature of the console command.
      *
@@ -22,6 +20,15 @@ class SqliteDeleteTest extends Command
      * @var string
      */
     protected $description = 'Remove the test sqlite file.';
+
+    public $outputDoesNotExist = 'Base Sqlite does not exist.';
+
+    public $outputSuccessfulPrefix = 'File successfully deleted: ';
+
+    /**
+     * @var SetupDatabase
+     */
+    protected $setupDatabase;
 
     /**
      * Create a new command instance.
@@ -38,17 +45,31 @@ class SqliteDeleteTest extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(SetupDatabase $setupDatabase)
     {
-        $basepath = $this->baseSqlite();
+        $this->setupDatabase = $setupDatabase;
+        $basepath = $this->setupDatabase->baseSqlite();
 
         if (!file_exists($basepath)) {
-            $this->warn('Base Sqlite does not exist.');
+            $this->outputFileDoesNotExist();
             return;
         }
 
         unlink($basepath);
 
-        $this->info('File successfully deleted: ' . $basepath);
+        $this->outputSuccessful($basepath);
+    }
+
+    public function outputFileDoesNotExist()
+    {
+        $this->warn($this->outputDoesNotExist);
+    }
+
+    /**
+     * @param string $basepath
+     */
+    public function outputSuccessful(string $basepath)
+    {
+        $this->info($this->outputSuccessfulPrefix . $basepath);
     }
 }

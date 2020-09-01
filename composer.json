@@ -18,7 +18,7 @@
     },
     "require-dev": {
         "php": "^7.2.0",
-        "orchestra/testbench": "^5.2"
+        "orchestra/testbench": "^5.3"
     },
     "autoload": {
         "classmap": [
@@ -28,7 +28,7 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "UnittestSqlite\\": "src/"
+            "BrandonBest\\UnittestSqlite\\": "src/"
         }
     },
     "extra": {
@@ -37,7 +37,7 @@
                 "BrandonBest\\UnittestSqlite\\UnittestSqliteServiceProvider"
             ],
             "aliases": {
-                "Brute": "UnittestSqlite\\UnittestSqliteFacade"
+                "UnittestSqlite": "UnittestSqlite\\UnittestSqliteFacade"
             }
         }
     },

@@ -3,12 +3,12 @@
 namespace BrandonBest\UnittestSqlite\Providers;
 
 /**
- * This file is part of Prion Development's Brute Package,
- * an brute force monitor and blocker for Lumen.
+ * This file is part of Prion Development's Unittest Sqlite Package,
+ * an speed improvement package for unit tests.
  *
  * @license MIT
  * @company Prion Development
- * @package Rate Limiter
+ * @package PHP UnitTtest Sqlite
  */
 
 use Illuminate\Support\ServiceProvider;

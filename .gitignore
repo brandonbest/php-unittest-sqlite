@@ -3,3 +3,5 @@
 /phpunit.xml
 .idea
 vendor/*
+.phpunit.result.cache
+src/tests/database
