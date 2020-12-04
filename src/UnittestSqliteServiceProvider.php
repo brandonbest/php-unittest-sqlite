@@ -23,6 +23,7 @@ class UnittestSqliteServiceProvider extends ServiceProvider
 
     protected $setup = [
         \BrandonBest\UnittestSqlite\Providers\Config::class,
+        \BrandonBest\UnittestSqlite\Providers\Seeders::class,
     ];
 
     /**

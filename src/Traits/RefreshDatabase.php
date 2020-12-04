@@ -2,6 +2,7 @@
 
 namespace BrandonBest\UnittestSqlite\Traits;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Artisan;
 
 trait RefreshDatabase
@@ -42,7 +43,12 @@ trait RefreshDatabase
             Artisan::call('migrate');
         }
 
-        // Run Seeders
+        try {
+            $this->seed('UnittestSeeder');
+        } catch (BindingResolutionException $e) {
+            //
+        }
+
         copy($this->copySqlite(), $this->baseSqlite());
         return;
     }
