@@ -11,6 +11,12 @@ The package works by managing two copies of a sqlite database, `base` and `copy`
 
 # Setup
 
+## Install
+
+```
+composer require --dev brandonbest/php-unittest-sqlite
+```
+
 ## PHP Unit
 
 Add the following listener to phpunit.xml.
